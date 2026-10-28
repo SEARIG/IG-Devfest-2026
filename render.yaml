@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: agro-ai-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: python -m pip install --no-cache-dir -r requirements.txt
+    startCommand: python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --no-access-log
+    healthCheckPath: /health
+    autoDeploy: false
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: FIREBASE_PROJECT_ID
+        value: agro-ai-34b4a
+      - key: LIVE_AI_ENABLED
+        value: "false"
+      - key: AI_MAX_RETRIES
+        value: "0"
+      - key: AI_MAX_OUTPUT_TOKENS
+        value: "700"
+      - key: RATE_LIMIT_PER_MINUTE
+        value: "12"
+      - key: MANDI_MAX_RETRIES
+        value: "1"

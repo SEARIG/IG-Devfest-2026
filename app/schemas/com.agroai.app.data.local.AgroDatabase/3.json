@@ -1,0 +1,1587 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "3c9b0fac64847bce657b6efe2d0972a2",
+    "entities": [
+      {
+        "tableName": "farm_plots",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `area` REAL NOT NULL, `areaUnit` TEXT NOT NULL, `soilType` TEXT NOT NULL, `irrigationMethod` TEXT NOT NULL, `cropHistory` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL, `ownerUid` TEXT NOT NULL DEFAULT 'local', PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "area",
+            "columnName": "area",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "areaUnit",
+            "columnName": "areaUnit",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "soilType",
+            "columnName": "soilType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "irrigationMethod",
+            "columnName": "irrigationMethod",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cropHistory",
+            "columnName": "cropHistory",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ownerUid",
+            "columnName": "ownerUid",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'local'"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_farm_plots_ownerUid",
+            "unique": false,
+            "columnNames": [
+              "ownerUid"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_farm_plots_ownerUid` ON `${TABLE_NAME}` (`ownerUid`)"
+          }
+        ]
+      },
+      {
+        "tableName": "farm_boundaries",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `plotId` TEXT NOT NULL, `encodedPoints` TEXT NOT NULL, `areaSquareMeters` REAL NOT NULL, `accuracyMeters` REAL, `updatedAt` INTEGER NOT NULL, `ownerUid` TEXT NOT NULL DEFAULT 'local', PRIMARY KEY(`id`), FOREIGN KEY(`plotId`) REFERENCES `farm_plots`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "plotId",
+            "columnName": "plotId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "encodedPoints",
+            "columnName": "encodedPoints",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "areaSquareMeters",
+            "columnName": "areaSquareMeters",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "accuracyMeters",
+            "columnName": "accuracyMeters",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ownerUid",
+            "columnName": "ownerUid",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'local'"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_farm_boundaries_plotId",
+            "unique": true,
+            "columnNames": [
+              "plotId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_farm_boundaries_plotId` ON `${TABLE_NAME}` (`plotId`)"
+          },
+          {
+            "name": "index_farm_boundaries_ownerUid",
+            "unique": false,
+            "columnNames": [
+              "ownerUid"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_farm_boundaries_ownerUid` ON `${TABLE_NAME}` (`ownerUid`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "farm_plots",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "plotId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "crop_plans",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `plotId` TEXT NOT NULL, `cropId` TEXT NOT NULL, `sowingEpochDay` INTEGER NOT NULL, `areaHectares` REAL NOT NULL, `irrigationMethod` TEXT NOT NULL, `seedVariety` TEXT NOT NULL, `status` TEXT NOT NULL, `seedQuantityKgLow` REAL NOT NULL, `seedQuantityKgHigh` REAL NOT NULL, `harvestStartEpochDay` INTEGER NOT NULL, `harvestEndEpochDay` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `ownerUid` TEXT NOT NULL DEFAULT 'local', PRIMARY KEY(`id`), FOREIGN KEY(`plotId`) REFERENCES `farm_plots`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "plotId",
+            "columnName": "plotId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cropId",
+            "columnName": "cropId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sowingEpochDay",
+            "columnName": "sowingEpochDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "areaHectares",
+            "columnName": "areaHectares",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "irrigationMethod",
+            "columnName": "irrigationMethod",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "seedVariety",
+            "columnName": "seedVariety",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "seedQuantityKgLow",
+            "columnName": "seedQuantityKgLow",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "seedQuantityKgHigh",
+            "columnName": "seedQuantityKgHigh",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "harvestStartEpochDay",
+            "columnName": "harvestStartEpochDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "harvestEndEpochDay",
+            "columnName": "harvestEndEpochDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ownerUid",
+            "columnName": "ownerUid",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'local'"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_crop_plans_plotId",
+            "unique": false,
+            "columnNames": [
+              "plotId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_crop_plans_plotId` ON `${TABLE_NAME}` (`plotId`)"
+          },
+          {
+            "name": "index_crop_plans_ownerUid",
+            "unique": false,
+            "columnNames": [
+              "ownerUid"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_crop_plans_ownerUid` ON `${TABLE_NAME}` (`ownerUid`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "farm_plots",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "plotId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "calendar_activities",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `planId` TEXT, `plotId` TEXT, `type` TEXT NOT NULL, `title` TEXT NOT NULL, `scheduledAt` INTEGER NOT NULL, `notes` TEXT NOT NULL, `completed` INTEGER NOT NULL, `reminderEnabled` INTEGER NOT NULL, `ownerUid` TEXT NOT NULL DEFAULT 'local', PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "planId",
+            "columnName": "planId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "plotId",
+            "columnName": "plotId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scheduledAt",
+            "columnName": "scheduledAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "completed",
+            "columnName": "completed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reminderEnabled",
+            "columnName": "reminderEnabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ownerUid",
+            "columnName": "ownerUid",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'local'"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_calendar_activities_planId",
+            "unique": false,
+            "columnNames": [
+              "planId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_calendar_activities_planId` ON `${TABLE_NAME}` (`planId`)"
+          },
+          {
+            "name": "index_calendar_activities_plotId",
+            "unique": false,
+            "columnNames": [
+              "plotId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_calendar_activities_plotId` ON `${TABLE_NAME}` (`plotId`)"
+          },
+          {
+            "name": "index_calendar_activities_scheduledAt",
+            "unique": false,
+            "columnNames": [
+              "scheduledAt"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_calendar_activities_scheduledAt` ON `${TABLE_NAME}` (`scheduledAt`)"
+          },
+          {
+            "name": "index_calendar_activities_ownerUid",
+            "unique": false,
+            "columnNames": [
+              "ownerUid"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_calendar_activities_ownerUid` ON `${TABLE_NAME}` (`ownerUid`)"
+          }
+        ]
+      },
+      {
+        "tableName": "ai_conversations",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `ownerUid` TEXT NOT NULL DEFAULT 'local', PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ownerUid",
+            "columnName": "ownerUid",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'local'"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_ai_conversations_ownerUid",
+            "unique": false,
+            "columnNames": [
+              "ownerUid"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ai_conversations_ownerUid` ON `${TABLE_NAME}` (`ownerUid`)"
+          }
+        ]
+      },
+      {
+        "tableName": "chat_messages",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `conversationId` TEXT NOT NULL, `role` TEXT NOT NULL, `text` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `cardTitle` TEXT, `cardLines` TEXT NOT NULL, `ownerUid` TEXT NOT NULL DEFAULT 'local', PRIMARY KEY(`id`), FOREIGN KEY(`conversationId`) REFERENCES `ai_conversations`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "conversationId",
+            "columnName": "conversationId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "role",
+            "columnName": "role",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "text",
+            "columnName": "text",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cardTitle",
+            "columnName": "cardTitle",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "cardLines",
+            "columnName": "cardLines",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ownerUid",
+            "columnName": "ownerUid",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'local'"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_chat_messages_conversationId",
+            "unique": false,
+            "columnNames": [
+              "conversationId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_chat_messages_conversationId` ON `${TABLE_NAME}` (`conversationId`)"
+          },
+          {
+            "name": "index_chat_messages_createdAt",
+            "unique": false,
+            "columnNames": [
+              "createdAt"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_chat_messages_createdAt` ON `${TABLE_NAME}` (`createdAt`)"
+          },
+          {
+            "name": "index_chat_messages_ownerUid",
+            "unique": false,
+            "columnNames": [
+              "ownerUid"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_chat_messages_ownerUid` ON `${TABLE_NAME}` (`ownerUid`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "ai_conversations",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "conversationId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "crop_inspections",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `plotId` TEXT, `imageUri` TEXT, `cropName` TEXT NOT NULL, `affectedParts` TEXT NOT NULL, `observations` TEXT NOT NULL, `possibleCauses` TEXT NOT NULL, `evidenceNeeded` TEXT NOT NULL, `nextSteps` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `imageModelUsed` INTEGER NOT NULL, `ownerUid` TEXT NOT NULL DEFAULT 'local', PRIMARY KEY(`id`), FOREIGN KEY(`plotId`) REFERENCES `farm_plots`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "plotId",
+            "columnName": "plotId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "imageUri",
+            "columnName": "imageUri",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "cropName",
+            "columnName": "cropName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "affectedParts",
+            "columnName": "affectedParts",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "observations",
+            "columnName": "observations",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "possibleCauses",
+            "columnName": "possibleCauses",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "evidenceNeeded",
+            "columnName": "evidenceNeeded",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nextSteps",
+            "columnName": "nextSteps",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "imageModelUsed",
+            "columnName": "imageModelUsed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ownerUid",
+            "columnName": "ownerUid",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'local'"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_crop_inspections_plotId",
+            "unique": false,
+            "columnNames": [
+              "plotId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_crop_inspections_plotId` ON `${TABLE_NAME}` (`plotId`)"
+          },
+          {
+            "name": "index_crop_inspections_createdAt",
+            "unique": false,
+            "columnNames": [
+              "createdAt"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_crop_inspections_createdAt` ON `${TABLE_NAME}` (`createdAt`)"
+          },
+          {
+            "name": "index_crop_inspections_ownerUid",
+            "unique": false,
+            "columnNames": [
+              "ownerUid"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_crop_inspections_ownerUid` ON `${TABLE_NAME}` (`ownerUid`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "farm_plots",
+            "onDelete": "SET NULL",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "plotId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "crop_symptoms",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `inspectionId` TEXT NOT NULL, `code` TEXT NOT NULL, `ownerUid` TEXT NOT NULL DEFAULT 'local', PRIMARY KEY(`id`), FOREIGN KEY(`inspectionId`) REFERENCES `crop_inspections`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "inspectionId",
+            "columnName": "inspectionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "code",
+            "columnName": "code",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ownerUid",
+            "columnName": "ownerUid",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'local'"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_crop_symptoms_inspectionId",
+            "unique": false,
+            "columnNames": [
+              "inspectionId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_crop_symptoms_inspectionId` ON `${TABLE_NAME}` (`inspectionId`)"
+          },
+          {
+            "name": "index_crop_symptoms_ownerUid",
+            "unique": false,
+            "columnNames": [
+              "ownerUid"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_crop_symptoms_ownerUid` ON `${TABLE_NAME}` (`ownerUid`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "crop_inspections",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "inspectionId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "harvest_records",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `planId` TEXT NOT NULL, `actualHarvestEpochDay` INTEGER NOT NULL, `quantity` REAL NOT NULL, `unit` TEXT NOT NULL, `sellingPricePerUnit` REAL, `actualTotalExpenses` REAL NOT NULL, `notes` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `ownerUid` TEXT NOT NULL DEFAULT 'local', PRIMARY KEY(`id`), FOREIGN KEY(`planId`) REFERENCES `crop_plans`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "planId",
+            "columnName": "planId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "actualHarvestEpochDay",
+            "columnName": "actualHarvestEpochDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "quantity",
+            "columnName": "quantity",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "unit",
+            "columnName": "unit",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sellingPricePerUnit",
+            "columnName": "sellingPricePerUnit",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "actualTotalExpenses",
+            "columnName": "actualTotalExpenses",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ownerUid",
+            "columnName": "ownerUid",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'local'"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_harvest_records_planId",
+            "unique": true,
+            "columnNames": [
+              "planId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_harvest_records_planId` ON `${TABLE_NAME}` (`planId`)"
+          },
+          {
+            "name": "index_harvest_records_actualHarvestEpochDay",
+            "unique": false,
+            "columnNames": [
+              "actualHarvestEpochDay"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_harvest_records_actualHarvestEpochDay` ON `${TABLE_NAME}` (`actualHarvestEpochDay`)"
+          },
+          {
+            "name": "index_harvest_records_ownerUid",
+            "unique": false,
+            "columnNames": [
+              "ownerUid"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_harvest_records_ownerUid` ON `${TABLE_NAME}` (`ownerUid`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "crop_plans",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "planId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "actual_expenses",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `harvestId` TEXT NOT NULL, `label` TEXT NOT NULL, `amount` REAL NOT NULL, `ownerUid` TEXT NOT NULL DEFAULT 'local', PRIMARY KEY(`id`), FOREIGN KEY(`harvestId`) REFERENCES `harvest_records`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "harvestId",
+            "columnName": "harvestId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "label",
+            "columnName": "label",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "amount",
+            "columnName": "amount",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ownerUid",
+            "columnName": "ownerUid",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'local'"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_actual_expenses_harvestId",
+            "unique": false,
+            "columnNames": [
+              "harvestId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_actual_expenses_harvestId` ON `${TABLE_NAME}` (`harvestId`)"
+          },
+          {
+            "name": "index_actual_expenses_ownerUid",
+            "unique": false,
+            "columnNames": [
+              "ownerUid"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_actual_expenses_ownerUid` ON `${TABLE_NAME}` (`ownerUid`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "harvest_records",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "harvestId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "farm_alerts",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `sourceKey` TEXT NOT NULL, `title` TEXT NOT NULL, `message` TEXT NOT NULL, `relatedPlanId` TEXT, `relatedPlotId` TEXT, `priority` TEXT NOT NULL, `scheduledAt` INTEGER NOT NULL, `read` INTEGER NOT NULL, `action` TEXT NOT NULL, `ownerUid` TEXT NOT NULL DEFAULT 'local', PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sourceKey",
+            "columnName": "sourceKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "message",
+            "columnName": "message",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "relatedPlanId",
+            "columnName": "relatedPlanId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "relatedPlotId",
+            "columnName": "relatedPlotId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "priority",
+            "columnName": "priority",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scheduledAt",
+            "columnName": "scheduledAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "read",
+            "columnName": "read",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "action",
+            "columnName": "action",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ownerUid",
+            "columnName": "ownerUid",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'local'"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_farm_alerts_ownerUid_sourceKey",
+            "unique": true,
+            "columnNames": [
+              "ownerUid",
+              "sourceKey"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_farm_alerts_ownerUid_sourceKey` ON `${TABLE_NAME}` (`ownerUid`, `sourceKey`)"
+          },
+          {
+            "name": "index_farm_alerts_scheduledAt",
+            "unique": false,
+            "columnNames": [
+              "scheduledAt"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_farm_alerts_scheduledAt` ON `${TABLE_NAME}` (`scheduledAt`)"
+          },
+          {
+            "name": "index_farm_alerts_read",
+            "unique": false,
+            "columnNames": [
+              "read"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_farm_alerts_read` ON `${TABLE_NAME}` (`read`)"
+          },
+          {
+            "name": "index_farm_alerts_ownerUid",
+            "unique": false,
+            "columnNames": [
+              "ownerUid"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_farm_alerts_ownerUid` ON `${TABLE_NAME}` (`ownerUid`)"
+          }
+        ]
+      },
+      {
+        "tableName": "weather_snapshots",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `location` TEXT NOT NULL, `observedAt` INTEGER NOT NULL, `forecastFor` INTEGER NOT NULL, `temperatureC` REAL NOT NULL, `humidityPercent` REAL NOT NULL, `windKph` REAL NOT NULL, `rainMillimetres` REAL NOT NULL, `condition` TEXT NOT NULL, `source` TEXT NOT NULL, `ownerUid` TEXT NOT NULL DEFAULT 'local', PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "location",
+            "columnName": "location",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "observedAt",
+            "columnName": "observedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "forecastFor",
+            "columnName": "forecastFor",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "temperatureC",
+            "columnName": "temperatureC",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "humidityPercent",
+            "columnName": "humidityPercent",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "windKph",
+            "columnName": "windKph",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rainMillimetres",
+            "columnName": "rainMillimetres",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "condition",
+            "columnName": "condition",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ownerUid",
+            "columnName": "ownerUid",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'local'"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_weather_snapshots_forecastFor",
+            "unique": false,
+            "columnNames": [
+              "forecastFor"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_weather_snapshots_forecastFor` ON `${TABLE_NAME}` (`forecastFor`)"
+          },
+          {
+            "name": "index_weather_snapshots_ownerUid",
+            "unique": false,
+            "columnNames": [
+              "ownerUid"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_weather_snapshots_ownerUid` ON `${TABLE_NAME}` (`ownerUid`)"
+          }
+        ]
+      },
+      {
+        "tableName": "market_prices",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `crop` TEXT NOT NULL, `state` TEXT NOT NULL, `district` TEXT NOT NULL, `market` TEXT NOT NULL, `minPricePerQuintal` REAL NOT NULL, `maxPricePerQuintal` REAL NOT NULL, `modalPricePerQuintal` REAL NOT NULL, `dataDateEpochDay` INTEGER NOT NULL, `source` TEXT NOT NULL, `savedAt` INTEGER NOT NULL, `ownerUid` TEXT NOT NULL DEFAULT 'local', PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "crop",
+            "columnName": "crop",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "state",
+            "columnName": "state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "district",
+            "columnName": "district",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "market",
+            "columnName": "market",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minPricePerQuintal",
+            "columnName": "minPricePerQuintal",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maxPricePerQuintal",
+            "columnName": "maxPricePerQuintal",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modalPricePerQuintal",
+            "columnName": "modalPricePerQuintal",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dataDateEpochDay",
+            "columnName": "dataDateEpochDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "savedAt",
+            "columnName": "savedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ownerUid",
+            "columnName": "ownerUid",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'local'"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_market_prices_ownerUid_crop_state_district_market_dataDateEpochDay",
+            "unique": true,
+            "columnNames": [
+              "ownerUid",
+              "crop",
+              "state",
+              "district",
+              "market",
+              "dataDateEpochDay"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_market_prices_ownerUid_crop_state_district_market_dataDateEpochDay` ON `${TABLE_NAME}` (`ownerUid`, `crop`, `state`, `district`, `market`, `dataDateEpochDay`)"
+          },
+          {
+            "name": "index_market_prices_dataDateEpochDay",
+            "unique": false,
+            "columnNames": [
+              "dataDateEpochDay"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_market_prices_dataDateEpochDay` ON `${TABLE_NAME}` (`dataDateEpochDay`)"
+          },
+          {
+            "name": "index_market_prices_ownerUid",
+            "unique": false,
+            "columnNames": [
+              "ownerUid"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_market_prices_ownerUid` ON `${TABLE_NAME}` (`ownerUid`)"
+          }
+        ]
+      },
+      {
+        "tableName": "sync_records",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ownerUid` TEXT NOT NULL, `collection` TEXT NOT NULL, `recordId` TEXT NOT NULL, `operation` TEXT NOT NULL, `payload` TEXT NOT NULL, `localRevision` INTEGER NOT NULL, `remoteRevision` INTEGER NOT NULL, `state` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL, `lastAttemptAt` INTEGER, `error` TEXT, `conflictPayload` TEXT, `conflictRevision` INTEGER, `conflictOperation` TEXT, PRIMARY KEY(`ownerUid`, `collection`, `recordId`))",
+        "fields": [
+          {
+            "fieldPath": "ownerUid",
+            "columnName": "ownerUid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "collection",
+            "columnName": "collection",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recordId",
+            "columnName": "recordId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "operation",
+            "columnName": "operation",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "payload",
+            "columnName": "payload",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "localRevision",
+            "columnName": "localRevision",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "remoteRevision",
+            "columnName": "remoteRevision",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "state",
+            "columnName": "state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastAttemptAt",
+            "columnName": "lastAttemptAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "error",
+            "columnName": "error",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "conflictPayload",
+            "columnName": "conflictPayload",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "conflictRevision",
+            "columnName": "conflictRevision",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "conflictOperation",
+            "columnName": "conflictOperation",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "ownerUid",
+            "collection",
+            "recordId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_sync_records_ownerUid_state",
+            "unique": false,
+            "columnNames": [
+              "ownerUid",
+              "state"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_sync_records_ownerUid_state` ON `${TABLE_NAME}` (`ownerUid`, `state`)"
+          },
+          {
+            "name": "index_sync_records_ownerUid_updatedAt",
+            "unique": false,
+            "columnNames": [
+              "ownerUid",
+              "updatedAt"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_sync_records_ownerUid_updatedAt` ON `${TABLE_NAME}` (`ownerUid`, `updatedAt`)"
+          }
+        ]
+      },
+      {
+        "tableName": "sync_state",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ownerUid` TEXT NOT NULL, `collection` TEXT NOT NULL, `lastServerSeconds` INTEGER NOT NULL, `lastServerNanos` INTEGER NOT NULL, `lastSyncAt` INTEGER, `lastError` TEXT, PRIMARY KEY(`ownerUid`, `collection`))",
+        "fields": [
+          {
+            "fieldPath": "ownerUid",
+            "columnName": "ownerUid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "collection",
+            "columnName": "collection",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastServerSeconds",
+            "columnName": "lastServerSeconds",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastServerNanos",
+            "columnName": "lastServerNanos",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastSyncAt",
+            "columnName": "lastSyncAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "lastError",
+            "columnName": "lastError",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "ownerUid",
+            "collection"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_sync_state_ownerUid",
+            "unique": false,
+            "columnNames": [
+              "ownerUid"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_sync_state_ownerUid` ON `${TABLE_NAME}` (`ownerUid`)"
+          }
+        ]
+      },
+      {
+        "tableName": "cached_farmer_profiles",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` TEXT NOT NULL, `name` TEXT NOT NULL, `phoneNumber` TEXT NOT NULL, `preferredLanguage` TEXT NOT NULL, `state` TEXT NOT NULL, `district` TEXT NOT NULL, `village` TEXT NOT NULL, `area` REAL NOT NULL, `areaUnit` TEXT NOT NULL, `soilType` TEXT NOT NULL, `irrigationType` TEXT NOT NULL, `currentCrops` TEXT NOT NULL, `goals` TEXT NOT NULL, `experienceLevel` TEXT NOT NULL, `onboardingCompleted` INTEGER NOT NULL, `createdAtSeconds` INTEGER, `createdAtNanos` INTEGER, `updatedAtSeconds` INTEGER, `updatedAtNanos` INTEGER, PRIMARY KEY(`uid`))",
+        "fields": [
+          {
+            "fieldPath": "uid",
+            "columnName": "uid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "phoneNumber",
+            "columnName": "phoneNumber",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "preferredLanguage",
+            "columnName": "preferredLanguage",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "state",
+            "columnName": "state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "district",
+            "columnName": "district",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "village",
+            "columnName": "village",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "area",
+            "columnName": "area",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "areaUnit",
+            "columnName": "areaUnit",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "soilType",
+            "columnName": "soilType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "irrigationType",
+            "columnName": "irrigationType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currentCrops",
+            "columnName": "currentCrops",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "goals",
+            "columnName": "goals",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "experienceLevel",
+            "columnName": "experienceLevel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "onboardingCompleted",
+            "columnName": "onboardingCompleted",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAtSeconds",
+            "columnName": "createdAtSeconds",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "createdAtNanos",
+            "columnName": "createdAtNanos",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "updatedAtSeconds",
+            "columnName": "updatedAtSeconds",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "updatedAtNanos",
+            "columnName": "updatedAtNanos",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "uid"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3c9b0fac64847bce657b6efe2d0972a2')"
+    ]
+  }
+}

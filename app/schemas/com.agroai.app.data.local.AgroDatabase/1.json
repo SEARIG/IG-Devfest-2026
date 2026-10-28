@@ -1,0 +1,351 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "be074188804d94b210596cbb8ceb80fa",
+    "entities": [
+      {
+        "tableName": "farm_plots",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `area` REAL NOT NULL, `areaUnit` TEXT NOT NULL, `soilType` TEXT NOT NULL, `irrigationMethod` TEXT NOT NULL, `cropHistory` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "area",
+            "columnName": "area",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "areaUnit",
+            "columnName": "areaUnit",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "soilType",
+            "columnName": "soilType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "irrigationMethod",
+            "columnName": "irrigationMethod",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cropHistory",
+            "columnName": "cropHistory",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "farm_boundaries",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `plotId` TEXT NOT NULL, `encodedPoints` TEXT NOT NULL, `areaSquareMeters` REAL NOT NULL, `accuracyMeters` REAL, `updatedAt` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`plotId`) REFERENCES `farm_plots`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "plotId",
+            "columnName": "plotId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "encodedPoints",
+            "columnName": "encodedPoints",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "areaSquareMeters",
+            "columnName": "areaSquareMeters",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "accuracyMeters",
+            "columnName": "accuracyMeters",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_farm_boundaries_plotId",
+            "unique": true,
+            "columnNames": [
+              "plotId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_farm_boundaries_plotId` ON `${TABLE_NAME}` (`plotId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "farm_plots",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "plotId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "crop_plans",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `plotId` TEXT NOT NULL, `cropId` TEXT NOT NULL, `sowingEpochDay` INTEGER NOT NULL, `areaHectares` REAL NOT NULL, `irrigationMethod` TEXT NOT NULL, `seedVariety` TEXT NOT NULL, `status` TEXT NOT NULL, `seedQuantityKgLow` REAL NOT NULL, `seedQuantityKgHigh` REAL NOT NULL, `harvestStartEpochDay` INTEGER NOT NULL, `harvestEndEpochDay` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`plotId`) REFERENCES `farm_plots`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "plotId",
+            "columnName": "plotId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cropId",
+            "columnName": "cropId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sowingEpochDay",
+            "columnName": "sowingEpochDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "areaHectares",
+            "columnName": "areaHectares",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "irrigationMethod",
+            "columnName": "irrigationMethod",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "seedVariety",
+            "columnName": "seedVariety",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "seedQuantityKgLow",
+            "columnName": "seedQuantityKgLow",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "seedQuantityKgHigh",
+            "columnName": "seedQuantityKgHigh",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "harvestStartEpochDay",
+            "columnName": "harvestStartEpochDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "harvestEndEpochDay",
+            "columnName": "harvestEndEpochDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_crop_plans_plotId",
+            "unique": false,
+            "columnNames": [
+              "plotId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_crop_plans_plotId` ON `${TABLE_NAME}` (`plotId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "farm_plots",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "plotId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "calendar_activities",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `planId` TEXT, `plotId` TEXT, `type` TEXT NOT NULL, `title` TEXT NOT NULL, `scheduledAt` INTEGER NOT NULL, `notes` TEXT NOT NULL, `completed` INTEGER NOT NULL, `reminderEnabled` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "planId",
+            "columnName": "planId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "plotId",
+            "columnName": "plotId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scheduledAt",
+            "columnName": "scheduledAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "completed",
+            "columnName": "completed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reminderEnabled",
+            "columnName": "reminderEnabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_calendar_activities_planId",
+            "unique": false,
+            "columnNames": [
+              "planId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_calendar_activities_planId` ON `${TABLE_NAME}` (`planId`)"
+          },
+          {
+            "name": "index_calendar_activities_plotId",
+            "unique": false,
+            "columnNames": [
+              "plotId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_calendar_activities_plotId` ON `${TABLE_NAME}` (`plotId`)"
+          },
+          {
+            "name": "index_calendar_activities_scheduledAt",
+            "unique": false,
+            "columnNames": [
+              "scheduledAt"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_calendar_activities_scheduledAt` ON `${TABLE_NAME}` (`scheduledAt`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'be074188804d94b210596cbb8ceb80fa')"
+    ]
+  }
+}

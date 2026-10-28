@@ -1,0 +1,119 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function owner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    function validProfile(uid, data) {
+      return data.keys().hasOnly([
+          'uid', 'name', 'phoneNumber', 'preferredLanguage', 'location', 'farm',
+          'currentCrops', 'goals', 'experienceLevel', 'onboardingCompleted',
+          'createdAt', 'updatedAt'
+        ])
+        && data.uid == uid
+        && data.phoneNumber == request.auth.token.phone_number
+        && data.name is string && data.name.size() >= 2 && data.name.size() <= 80
+        && data.phoneNumber is string && data.phoneNumber.matches('^\\+91[6-9][0-9]{9}$')
+        && data.preferredLanguage in ['en', 'hi']
+        && data.location is map
+        && data.location.keys().hasOnly(['state', 'district', 'village'])
+        && text(data.location.state, 80) && data.location.state.size() > 0
+        && text(data.location.district, 80) && data.location.district.size() > 0
+        && text(data.location.village, 120)
+        && data.farm is map
+        && data.farm.keys().hasOnly(['area', 'areaUnit', 'soilType', 'irrigationType'])
+        && data.farm.area is number && data.farm.area > 0 && data.farm.area <= 100000
+        && data.farm.areaUnit in ['bigha', 'acre', 'hectare']
+        && data.farm.soilType in ['sandy', 'clay', 'loamy', 'black', 'red', 'unknown']
+        && data.farm.irrigationType in ['yes', 'no', 'seasonal']
+        && data.currentCrops is list && data.currentCrops.size() <= 30
+        && data.goals is list && data.goals.size() <= 20
+        && data.experienceLevel in ['', 'beginner', 'intermediate', 'experienced']
+        && data.onboardingCompleted is bool
+        && data.createdAt is timestamp && data.updatedAt is timestamp;
+    }
+
+    function validEnvelope(uid, recordId) {
+      let data = request.resource.data;
+      return data.keys().hasOnly(['ownerUid', 'recordId', 'revision', 'deleted', 'payload', 'updatedAt'])
+        && data.ownerUid == uid && data.recordId == recordId
+        && data.revision is int && data.revision > 0
+        && data.deleted is bool && data.payload is map
+        && data.updatedAt == request.time
+        && (!data.deleted || data.payload.size() == 0);
+    }
+
+    function validCreate(uid, recordId) {
+      return validEnvelope(uid, recordId) && request.resource.data.revision == 1;
+    }
+
+    function validUpdate(uid, recordId) {
+      return validEnvelope(uid, recordId)
+        && request.resource.data.ownerUid == resource.data.ownerUid
+        && request.resource.data.recordId == resource.data.recordId
+        && request.resource.data.revision == resource.data.revision + 1;
+    }
+
+    function strings(value, limit) {
+      return value is list && value.size() <= limit;
+    }
+
+    function text(value, limit) {
+      return value is string && value.size() <= limit;
+    }
+
+    match /farmers/{uid} {
+      allow read: if owner(uid);
+      allow create: if owner(uid) && validProfile(uid, request.resource.data)
+        && request.resource.data.createdAt == request.time && request.resource.data.updatedAt == request.time;
+      allow update: if owner(uid) && validProfile(uid, request.resource.data)
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.phoneNumber == resource.data.phoneNumber
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if false;
+
+      match /plots/{recordId} {
+        function valid(data) { return data.keys().hasOnly(['name','area','areaUnit','soilType','irrigationMethod','cropHistory','clientUpdatedAt']) && text(data.name, 80) && data.name.size() > 0 && data.area is number && data.area > 0 && data.area <= 100000 && text(data.areaUnit, 20) && text(data.soilType, 40) && text(data.irrigationMethod, 40) && text(data.cropHistory, 1000) && data.clientUpdatedAt is int; }
+        allow read: if owner(uid); allow create: if owner(uid) && validCreate(uid, recordId) && (request.resource.data.deleted || valid(request.resource.data.payload)); allow update: if owner(uid) && validUpdate(uid, recordId) && (request.resource.data.deleted || valid(request.resource.data.payload)); allow delete: if false;
+      }
+      match /boundaries/{recordId} {
+        function valid(data) { return data.keys().hasOnly(['plotId','encodedPoints','areaSquareMeters','accuracyMeters','clientUpdatedAt']) && text(data.plotId, 128) && text(data.encodedPoints, 50000) && data.areaSquareMeters is number && data.areaSquareMeters > 0 && data.areaSquareMeters <= 1000000000 && (data.accuracyMeters == null || (data.accuracyMeters is number && data.accuracyMeters >= 0 && data.accuracyMeters <= 1000)) && data.clientUpdatedAt is int; }
+        allow read: if owner(uid); allow create: if owner(uid) && validCreate(uid, recordId) && (request.resource.data.deleted || valid(request.resource.data.payload)); allow update: if owner(uid) && validUpdate(uid, recordId) && (request.resource.data.deleted || valid(request.resource.data.payload)); allow delete: if false;
+      }
+      match /cropPlans/{recordId} {
+        function valid(data) { return data.keys().hasOnly(['plotId','cropId','sowingEpochDay','areaHectares','irrigationMethod','seedVariety','status','seedQuantityKgLow','seedQuantityKgHigh','harvestStartEpochDay','harvestEndEpochDay','clientUpdatedAt']) && text(data.plotId, 128) && text(data.cropId, 80) && data.sowingEpochDay is int && data.areaHectares is number && data.areaHectares > 0 && data.areaHectares <= 100000 && text(data.irrigationMethod, 40) && text(data.seedVariety, 120) && data.status in ['planned','active','completed'] && data.seedQuantityKgLow is number && data.seedQuantityKgLow >= 0 && data.seedQuantityKgHigh is number && data.seedQuantityKgHigh >= data.seedQuantityKgLow && data.harvestStartEpochDay is int && data.harvestEndEpochDay is int && data.clientUpdatedAt is int; }
+        allow read: if owner(uid); allow create: if owner(uid) && validCreate(uid, recordId) && (request.resource.data.deleted || valid(request.resource.data.payload)); allow update: if owner(uid) && validUpdate(uid, recordId) && (request.resource.data.deleted || valid(request.resource.data.payload)); allow delete: if false;
+      }
+      match /activities/{recordId} {
+        function valid(data) { return data.keys().hasOnly(['planId','plotId','type','title','scheduledAt','notes','completed','reminderEnabled']) && (data.planId == null || text(data.planId, 128)) && (data.plotId == null || text(data.plotId, 128)) && text(data.type, 40) && text(data.title, 160) && text(data.notes, 1000) && data.scheduledAt is int && data.completed is bool && data.reminderEnabled is bool; }
+        allow read: if owner(uid); allow create: if owner(uid) && validCreate(uid, recordId) && (request.resource.data.deleted || valid(request.resource.data.payload)); allow update: if owner(uid) && validUpdate(uid, recordId) && (request.resource.data.deleted || valid(request.resource.data.payload)); allow delete: if false;
+      }
+      match /conversations/{recordId} {
+        function valid(data) { return data.keys().hasOnly(['title','createdAt','clientUpdatedAt']) && text(data.title, 160) && data.createdAt is int && data.clientUpdatedAt is int; }
+        allow read: if owner(uid); allow create: if owner(uid) && validCreate(uid, recordId) && (request.resource.data.deleted || valid(request.resource.data.payload)); allow update: if owner(uid) && validUpdate(uid, recordId) && (request.resource.data.deleted || valid(request.resource.data.payload)); allow delete: if false;
+      }
+      match /chatMessages/{recordId} {
+        function valid(data) { return data.keys().hasOnly(['conversationId','role','text','createdAt','cardTitle','cardLines']) && text(data.conversationId, 128) && data.role in ['farmer','assistant'] && text(data.text, 4000) && data.createdAt is int && (data.cardTitle == null || text(data.cardTitle, 160)) && text(data.cardLines, 10000); }
+        allow read: if owner(uid); allow create: if owner(uid) && validCreate(uid, recordId) && (request.resource.data.deleted || valid(request.resource.data.payload)); allow update: if owner(uid) && validUpdate(uid, recordId) && (request.resource.data.deleted || valid(request.resource.data.payload)); allow delete: if false;
+      }
+      match /inspections/{recordId} {
+        function valid(data) { return data.keys().hasOnly(['plotId','cropName','symptoms','affectedParts','observations','possibleCauses','evidenceNeeded','nextSteps','createdAt','imageModelUsed']) && (data.plotId == null || text(data.plotId, 128)) && text(data.cropName, 80) && strings(data.symptoms, 20) && strings(data.affectedParts, 10) && text(data.observations, 2000) && strings(data.possibleCauses, 20) && strings(data.evidenceNeeded, 20) && strings(data.nextSteps, 20) && data.createdAt is int && data.imageModelUsed is bool; }
+        allow read: if owner(uid); allow create: if owner(uid) && validCreate(uid, recordId) && (request.resource.data.deleted || valid(request.resource.data.payload)); allow update: if owner(uid) && validUpdate(uid, recordId) && (request.resource.data.deleted || valid(request.resource.data.payload)); allow delete: if false;
+      }
+      match /harvests/{recordId} {
+        function valid(data) { return data.keys().hasOnly(['planId','actualHarvestEpochDay','quantity','unit','sellingPricePerUnit','actualTotalExpenses','notes','createdAt']) && text(data.planId, 128) && data.actualHarvestEpochDay is int && data.quantity is number && data.quantity > 0 && text(data.unit, 20) && (data.sellingPricePerUnit == null || (data.sellingPricePerUnit is number && data.sellingPricePerUnit >= 0)) && data.actualTotalExpenses is number && data.actualTotalExpenses >= 0 && text(data.notes, 2000) && data.createdAt is int; }
+        allow read: if owner(uid); allow create: if owner(uid) && validCreate(uid, recordId) && (request.resource.data.deleted || valid(request.resource.data.payload)); allow update: if owner(uid) && validUpdate(uid, recordId) && (request.resource.data.deleted || valid(request.resource.data.payload)); allow delete: if false;
+      }
+      match /expenses/{recordId} {
+        function valid(data) { return data.keys().hasOnly(['harvestId','label','amount']) && text(data.harvestId, 128) && text(data.label, 160) && data.amount is number && data.amount >= 0; }
+        allow read: if owner(uid); allow create: if owner(uid) && validCreate(uid, recordId) && (request.resource.data.deleted || valid(request.resource.data.payload)); allow update: if owner(uid) && validUpdate(uid, recordId) && (request.resource.data.deleted || valid(request.resource.data.payload)); allow delete: if false;
+      }
+      match /alerts/{recordId} {
+        function valid(data) { return data.keys().hasOnly(['sourceKey','title','message','relatedPlanId','relatedPlotId','priority','scheduledAt','read','action']) && text(data.sourceKey, 200) && text(data.title, 160) && text(data.message, 1000) && (data.relatedPlanId == null || text(data.relatedPlanId, 128)) && (data.relatedPlotId == null || text(data.relatedPlotId, 128)) && data.priority in ['low','normal','high'] && data.scheduledAt is int && data.read is bool && text(data.action, 80); }
+        allow read: if owner(uid); allow create: if owner(uid) && validCreate(uid, recordId) && (request.resource.data.deleted || valid(request.resource.data.payload)); allow update: if owner(uid) && validUpdate(uid, recordId) && (request.resource.data.deleted || valid(request.resource.data.payload)); allow delete: if false;
+      }
+    }
+  }
+}

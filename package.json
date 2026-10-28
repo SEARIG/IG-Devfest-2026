@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "scripts": {
+    "test:rules": "firebase emulators:exec --only firestore --project agro-ai-34b4a \"node --test firestore.rules.test.mjs\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "6.0.0",
+    "firebase": "13.0.0"
+  }
+}
