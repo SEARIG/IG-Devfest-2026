@@ -8,6 +8,13 @@ The project is release-candidate ready for controlled testing, not activated in 
 
 No OTP is hardcoded, no service/provider key is embedded in the APK, and the app remains useful offline. Paid AI and official Mandi lookup stay disabled until the backend is securely configured.
 
+## APK downloads
+
+- [Download the installable DevFest demo APK](release/AGRO-AI-DevFest-2026-demo-debug.apk) — Android debug-signed; use only for the controlled demonstration.
+- [Download the minified release candidate](release/AGRO-AI-DevFest-2026-release-unsigned.apk) — unsigned, SHA-256 `BCA6147A318FAFB2D6AA32E8C5DFB2547E0739540194D15FA8EDE77F96B1FD15`; this is not a production APK and cannot be distributed as one.
+
+A production-signed release remains unavailable until the four `AGRO_RELEASE_*` variables reference a valid private keystore and credentials outside this repository.
+
 | Boundary | Current evidence |
 |---|---|
 | Android | 19 JVM tests, lint with 0 errors, 12 emulator instrumentation tests, debug and minified release cold-launch smoke |
